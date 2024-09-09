@@ -16,6 +16,7 @@ Including another URLconf
 """
 
 from django.urls import path, include
+from rest_framework.authtoken import views
 from rest_framework.routers import DefaultRouter
 from api.views import (
     InvestmentAccountViewSet,
@@ -34,4 +35,5 @@ urlpatterns = [
         name='user-transactions'
     ),
     path('', include(router.urls)),
+    path('api-token-auth/', views.obtain_auth_token),
 ]

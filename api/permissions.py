@@ -1,3 +1,5 @@
+"""This part dictates the permissions of the different accounts"""
+
 from rest_framework import permissions
 from .models import InvestmentAccountUser
 

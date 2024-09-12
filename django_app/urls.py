@@ -23,6 +23,7 @@ from api.views import (
     TransactionViewSet,
     UserTransactionsView
 )
+from .views_2 import user_profile
 
 router = DefaultRouter()
 router.register(r'investment-accounts', InvestmentAccountViewSet)
@@ -37,4 +38,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-token-auth/', views.obtain_auth_token),
     path('api-auth/', include('rest_framework.urls')),
+    path('accounts/profile/', user_profile, name='user_profile'),
 ]

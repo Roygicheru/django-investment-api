@@ -81,6 +81,7 @@ class InvestmentAccountTests(APITestCase):
             )
 
             self.assertEqual(len(response.data['transactions']), 1)
-            self.assertEqual(Decimal(response.data['total_balance']), Decimal('100'))
+            self.assertEqual(
+                Decimal(response.data['total_balance']), Decimal('100'))
         else:
             print("Test failed due to unexpected status code")

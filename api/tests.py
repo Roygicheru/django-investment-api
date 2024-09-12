@@ -1,11 +1,18 @@
 from django.urls import reverse
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
-from .models import User, InvestmentAccount, InvestmentAccountUser, Transaction
+from decimal import Decimal
+from .models import (
+    User,
+    InvestmentAccount,
+    InvestmentAccountUser,
+    Transaction
+)
 
 
 class InvestmentAccountTests(APITestCase):
     def setUp(self):
+        self.client = APIClient()
         self.user = User.objects.create_user(
             username='testuser',
             password='testpass'
@@ -31,8 +38,6 @@ class InvestmentAccountTests(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], self.transaction.pk)
-
-        # Validate investment_account field
         self.assertEqual(
             response.data['investment_account'],
             self.investment_account.pk
@@ -42,12 +47,40 @@ class InvestmentAccountTests(APITestCase):
 
     def test_admin_user_transactions(self):
         admin_user = User.objects.create_superuser(
-            username='adminuser',
-            password='adminpass'
+            username='roygicheru',
+            password='somethingdifficult'
         )
         url = reverse('user-transactions') + f'?user_id={self.user.id}'
+
+        print(f"Admin User ID: {admin_user.id}")
+        print(f"Admin User Is Staff: {admin_user.is_staff}")
+        print(f"Admin User Is Superuser: {admin_user.is_superuser}")
+
         self.client.force_authenticate(user=admin_user)
-        response = self.client.get(url)
+
+        print(
+            "Is authenticated: "
+            f"{self.client.handler._force_user.is_authenticated}"
+        )
+
+        response = self.client.get(url, format='json')
+
+        print(f"Status Code: {response.status_code}")
+        print(f"Headers: {response.headers}")
+        print(f"Content: {response.content}")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data['transactions']), 1)
-        self.assertEqual(response.data['total_balance'], 100)
+
+        if response.status_code == status.HTTP_200_OK:
+            self.assertIn('transactions', response.data)
+            self.assertIn('total_balance', response.data)
+            self.assertIsInstance(response.data['transactions'], list)
+            self.assertIsInstance(
+                response.data['total_balance'],
+                (int, float, Decimal)
+            )
+
+            self.assertEqual(len(response.data['transactions']), 1)
+            self.assertEqual(Decimal(response.data['total_balance']), Decimal('100'))
+        else:
+            print("Test failed due to unexpected status code")

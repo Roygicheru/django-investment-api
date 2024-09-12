@@ -1,4 +1,7 @@
-from rest_framework import viewsets, permissions, views, response, status
+from rest_framework import viewsets, permissions, status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import IsAdminUser
 from django.db.models import Sum
 from .models import InvestmentAccount, Transaction
 from .serializers import InvestmentAccountSerializer, TransactionSerializer
@@ -28,7 +31,6 @@ class TransactionViewSet(viewsets.ModelViewSet):
             investment_account__users=user
         )
 
-        # Ensure correct instance filtering
         if not queryset.exists():
             raise ValueError(
                 "No transactions found for the current user."
@@ -37,8 +39,8 @@ class TransactionViewSet(viewsets.ModelViewSet):
         return queryset
 
 
-class UserTransactionsView(views.APIView):
-    permission_classes = [permissions.IsAdminUser]
+class UserTransactionsView(APIView):
+    permission_classes = [IsAdminUser]
 
     def get(self, request):
         user_id = request.query_params.get('user_id')
@@ -49,9 +51,8 @@ class UserTransactionsView(views.APIView):
             investment_account__users__id=user_id
         )
 
-        # Validate queryset
         if not queryset.exists():
-            return response.Response(
+            return Response(
                 {'error': 'No transactions found for the given user.'},
                 status=status.HTTP_404_NOT_FOUND
             )
@@ -66,4 +67,4 @@ class UserTransactionsView(views.APIView):
             'transactions': serializer.data,
             'total_balance': total_balance
         }
-        return response.Response(data)
+        return Response(data)

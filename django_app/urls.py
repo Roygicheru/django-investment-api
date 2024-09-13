@@ -16,6 +16,7 @@ router.register(r'transactions', TransactionViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(router.urls)),
     path('api/', include(router.urls)),
     path(
         'api/user-transactions/',

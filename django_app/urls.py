@@ -2,6 +2,7 @@ from django.urls import path, include
 from django.contrib import admin
 from rest_framework.authtoken import views as auth_views
 from rest_framework.routers import DefaultRouter
+from django.views.generic import TemplateView
 from api.views import (
     InvestmentAccountViewSet,
     TransactionViewSet,
@@ -24,4 +25,5 @@ urlpatterns = [
     path('api-token-auth/', auth_views.obtain_auth_token),
     path('api-auth/', include('rest_framework.urls')),
     path('accounts/profile/', user_profile, name='user_profile'),
+    path('', TemplateView.as_view(template_name='home.html'), name='home'),
 ]

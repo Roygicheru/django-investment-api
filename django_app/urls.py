@@ -25,6 +25,11 @@ urlpatterns = [
         name='account-transactions'
     ),
     path(
+        'user-transactions/',
+        UserTransactionsView.as_view(),
+        name='user-transactions'
+    ),
+    path(
         'api/user-transactions/',
         UserTransactionsView.as_view(),
         name='user-transactions'

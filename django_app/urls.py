@@ -25,15 +25,25 @@ urlpatterns = [
         name='account-transactions'
     ),
     path(
-        'user-transactions/',
+        'api/admin/transactions/',
         UserTransactionsView.as_view(),
-        name='user-transactions'
+        name='admin-transactions'
     ),
-    path(
-        'api/user-transactions/',
-        UserTransactionsView.as_view(),
-        name='user-transactions'
-    ),
+    # path(
+    #     'user-transactions/',
+    #     UserTransactionsView.as_view(),
+    #     name='user-transactions'
+    # ),
+    # path(
+    #     'api/user-transactions/',
+    #     UserTransactionsView.as_view(),
+    #     name='user-transactions'
+    # ),
+    # path(
+    #     'admin/transactions/',
+    #     UserTransactionsView.as_view(),
+    #     name='admin-transactions'
+    # ),
     path(
         'api/investment-accounts/<int:account_id>/transactions/<int:pk>/',
         TransactionViewSet.as_view({

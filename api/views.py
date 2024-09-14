@@ -76,25 +76,20 @@ class UserTransactionsView(APIView):
 
     def get(self, request):
         user_id = request.query_params.get('user_id')
-        if not user_id:
-            return Response(
-                {"error": "User ID is required."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-
         start_date = request.query_params.get('start_date')
         end_date = request.query_params.get('end_date')
 
-        queryset = Transaction.objects.filter(
-            investment_account__users__id=user_id
-        )
+        queryset = Transaction.objects.all()
+
+        if user_id:
+            queryset = queryset.filter(investment_account__users__id=user_id)
 
         if start_date and end_date:
             queryset = queryset.filter(date__range=[start_date, end_date])
 
         if not queryset.exists():
             return Response(
-                {'error': 'No transactions found for the given user.'},
+                {'error': 'No transactions found for the given criteria.'},
                 status=status.HTTP_404_NOT_FOUND
             )
 

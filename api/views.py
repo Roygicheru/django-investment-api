@@ -3,8 +3,13 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from django.db.models import Sum
+
 from .models import InvestmentAccount, Transaction
-from .serializers import InvestmentAccountSerializer, TransactionSerializer
+from .serializers import (
+    InvestmentAccountSerializer,
+    TransactionSerializer,
+    # InvestmentAccountUserSerializer
+)
 from .permissions import InvestmentAccountPermission
 
 
@@ -27,16 +32,29 @@ class TransactionViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         user = self.request.user
+        account_id = self.kwargs.get(
+            'account_id')
         queryset = super().get_queryset().filter(
             investment_account__users=user
         )
-
-        if not queryset.exists():
-            raise ValueError(
-                "No transactions found for the current user."
-            )
+        if account_id:
+            queryset = queryset.filter(investment_account_id=account_id)
 
         return queryset
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(
+            data=request.data,
+            context={'request': request, 'view': self}
+        )
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED,
+            headers=headers
+        )
 
 
 class UserTransactionsView(APIView):

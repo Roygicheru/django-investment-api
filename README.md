@@ -53,12 +53,12 @@ Create a superuser account using python manage.py createsuperuser.
 
 Start the development server using python manage.py runserver.
 
-Access the API endpoints using the provided URLs and authentication tokens.
+Access the API endpoints using the provided URLs and authentication tokens using POST. In my application I used cURL for the POST test commands.
 
 
 
 **Testing**
-This Django application has been rigorously tested using Django's built-in testing framework and Django REST Framework's APITestCase. The test suite covers various aspects of the application, focusing on user permissions, transaction creation, and data retrieval.
+This Django application has been rigorously tested using Django's built-in testing framework, cURL and Django REST Framework's APITestCase. The test suite covers various aspects of the application, focusing on user permissions, transaction creation, and data retrieval.
 
 Key Test Areas:
 
